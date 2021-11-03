@@ -115,8 +115,12 @@ public class Race {
          Semafor binarny jest szczególnym przypadkiem semafora ogólnego, ponieważ
          działa on jak semafor ogólny, synchronizując dostęp do jednego współdzielonego zasobu.
          Natomiast semafor ogólny może synchronizować dostęp do dowolnej ilości współdzielonych zasobów.
+
+         Przykład praktyczny:
+         Realizacja semafora binarnego wykorzystywanego do programu wyścig za pomocą semafora ogólnego.
+         Działa on poprawnie, ponieważ wartość counter na końcu wynosi 0, czyli tyle ile na początku.
          */
-        ISemaphore sem3 = new CountingSemaphore(1);
+        CountingSemaphore sem3 = new CountingSemaphore(1);
         Counter counter3 = new Counter(0, sem3);
 
         Runnable incr3 = () -> {

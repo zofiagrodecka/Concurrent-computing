@@ -20,12 +20,11 @@ public class CountingSemaphore implements ISemaphore{
 
     @Override
     public void P() throws InterruptedException { // decrementation
+        can_decrement.P();
         next_operation.P();
         _value--;
-        if(_value < 0){
-            _waiting++;
-            next_operation.V();
-            can_decrement.P();
+        if(_value > 0){
+            can_decrement.V();
         }
         next_operation.V();
     }
@@ -40,11 +39,9 @@ public class CountingSemaphore implements ISemaphore{
         }
 
         _value++;
-        if(_waiting > 0){
+        if(_value > 0){
             can_decrement.V();
         }
-        else{
-            next_operation.V();
-        }
+         next_operation.V();
     }
 }

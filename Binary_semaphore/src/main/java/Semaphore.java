@@ -19,11 +19,22 @@ public class Semaphore implements ISemaphore{
             }
         }
         _state = false;
-        notify();
+        notifyAll();
     }
 
     @Override
     public synchronized void V() { // incrementation
+        /*while (_state) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        _state = true;
+        notifyAll();*/
+
         if(_waiting > 0){
             notify();
             _waiting--;

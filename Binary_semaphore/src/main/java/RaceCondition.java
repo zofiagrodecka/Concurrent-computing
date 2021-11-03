@@ -1,4 +1,4 @@
-public class Race {
+public class RaceCondition {
 
     public static void main(String[] args) {
         int n = 100000;

@@ -54,21 +54,22 @@ public class Race {
         bo zacznie pracę w sekcji krytycznej, ale w tym samym czasie zostanie wpuszczony do sekcji krytycznej też ten
         drugi, "wolniejszy" wątek, chociaż nie powinien, bo w tamtym ifie zobaczył on, że semafor jest podniesiony,
         a nie zdążył zobaczyć, że już ktoś przed nim go opuścił. Żeby takiej sytuacji zapobiec, używa się pętli while
-        zamiast samego if, bo wtedy ten "wolniejszy" wątek zostanie zablokowany bo w tym while zobaczy, że semafor
+        zamiast samego if, bo wtedy ten "wolniejszy" wątek zostanie zablokowany, ponieważ w tym while zobaczy, że semafor
         jednak jest opuszczony.
 
         Praktyczny przykład:
         2 wątki dzielące licznik w counterze, jeden go zwiększa (jego numer to 1) a drugi (z numerem 2) go zmniejsza n-razy.
-
-        Wątek 2 czeka na wejście do monitora
-        Obudzony wątek: 2
-        Obudzony wątek: 1
-        Wątek 1 czeka na wejście do monitora
-        Wątek 2 czeka na wejście do monitora
-        Obudzony wątek: 1
+        W takiej sytuacji bardzo często końcowa wartość countera jest różna od wartości, jaką miał na początku,
+        chociaż nie powinna. Wartość countera inna niż jego początkowa wartość świadczy o tym, że operacja P na semaforze
+        wpuściła do sekcji krytycznej obydwa wątki, chociaż nie powinna. Powinna była obudzić wyłącznie jeden z nich,
+        a drugi powinien nadal pozostać uśpiony. W takiej sytuacji następuje wyścig, ponieważ 2 wątki korzystają
+        jednocześnie z dzielonego zasobu i chcą go zmienić. Poprawnie zaimplementowany semafor z użyciem while zamiast
+        if by nie dopuścił do wyścigu, a tym samym wartość counter by została zwiększona tyle razy, ile razy byłaby
+        zmniejszona, więc na końcu pozostałaby niezmieniona.
          */
+
         ISemaphore sem2 = new IncorrectSemaphore(true);
-        Counter counter2 = new Counter(0, sem2, true);
+        Counter counter2 = new Counter(0, sem2);
 
         Runnable incr2 = () -> {
             try{
@@ -112,9 +113,10 @@ public class Race {
         // 1.3
         /*
          Semafor binarny jest szczególnym przypadkiem semafora ogólnego, ponieważ
-         ogranicza on podniesienie wartości semafora ogólnego maksymalnie do 1.
+         działa on jak semafor ogólny, synchronizując dostęp do jednego współdzielonego zasobu.
+         Natomiast semafor ogólny może synchronizować dostęp do dowolnej ilości współdzielonych zasobów.
          */
-        ISemaphore sem3 = new CountingSemaphore(2);
+        ISemaphore sem3 = new CountingSemaphore(1);
         Counter counter3 = new Counter(0, sem3);
 
         Runnable incr3 = () -> {

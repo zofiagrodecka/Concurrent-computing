@@ -1,4 +1,4 @@
 public interface ISemaphore {
     void P() throws InterruptedException;
-    void V();
+    void V() throws InterruptedException;
 }

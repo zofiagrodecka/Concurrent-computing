@@ -49,23 +49,22 @@ public class RaceCondition {
         // 1.2
         /*
         Do implementacji semafora za pomocą metod wait i notify nie wystarczy instrukcja if, tylko potrzeba użyć while,
-        ponieważ gdyby było samo if, to mogłaby się zdarzyć taka sytuacja, że obydwa wątki, które chcą wejść do sekcji
-        krytycznej zobaczą, że semafor już jest wolny, pierwszy lepszy wątek, który będzie szybszy opuści semafor,
-        bo zacznie pracę w sekcji krytycznej, ale w tym samym czasie zostanie wpuszczony do sekcji krytycznej też ten
-        drugi, "wolniejszy" wątek, chociaż nie powinien, bo w tamtym ifie zobaczył on, że semafor jest podniesiony,
-        a nie zdążył zobaczyć, że już ktoś przed nim go opuścił. Żeby takiej sytuacji zapobiec, używa się pętli while
-        zamiast samego if, bo wtedy ten "wolniejszy" wątek zostanie zablokowany, ponieważ w tym while zobaczy, że semafor
-        jednak jest opuszczony.
+        ponieważ mogłaby się zdarzyć taka sytuacja, że dany wątek zostanie obudzony, gdy nie jest spełniony warunek,
+        na którym czeka. Wtedy, gdyby tam było samo if, to wątek zostałby wpuszczony do sekcji krytycznej, chociaż nie
+        powinien, bo w tamtym ifie zobaczył on, że semafor jest podniesiony, a nie zdążył zobaczyć, że już ktoś przed
+        nim go opuścił. Żeby takiej sytuacji zapobiec, używa się pętli while zamiast samego if, która umożliwia
+        ponowne sprawdzenie, czy warunek faktycznie jest spełniony w momencie obudzenia wątku.
 
         Praktyczny przykład:
-        2 wątki dzielące licznik w counterze, jeden go zwiększa (jego numer to 1) a drugi (z numerem 2) go zmniejsza n-razy.
+        2 wątki dzielące licznik w counterze, jeden go zwiększa a drugi go zmniejsza n-razy.
         W takiej sytuacji bardzo często końcowa wartość countera jest różna od wartości, jaką miał na początku,
         chociaż nie powinna. Wartość countera inna niż jego początkowa wartość świadczy o tym, że operacja P na semaforze
         wpuściła do sekcji krytycznej obydwa wątki, chociaż nie powinna. Powinna była obudzić wyłącznie jeden z nich,
         a drugi powinien nadal pozostać uśpiony. W takiej sytuacji następuje wyścig, ponieważ 2 wątki korzystają
         jednocześnie z dzielonego zasobu i chcą go zmienić. Poprawnie zaimplementowany semafor z użyciem while zamiast
         if by nie dopuścił do wyścigu, a tym samym wartość counter by została zwiększona tyle razy, ile razy byłaby
-        zmniejszona, więc na końcu pozostałaby niezmieniona.
+        zmniejszona, więc na końcu pozostałaby niezmieniona. Niekiedy nawet występuje zakleszczenie obydwu
+        czekających wątków, czemu jest w stanie zapobiec użycie pętli while zamiast if.
          */
 
         ISemaphore sem2 = new IncorrectSemaphore(true);

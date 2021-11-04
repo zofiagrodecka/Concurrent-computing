@@ -30,18 +30,12 @@ public class CountingSemaphore implements ISemaphore{
     }
 
     @Override
-    public void V(){ // incrementation
-        try {
-            next_operation.P();
-        } catch (InterruptedException e){
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
+    public void V() throws InterruptedException { // incrementation
+        next_operation.P();
         _value++;
         if(_value > 0){
             can_decrement.V();
         }
-         next_operation.V();
+        next_operation.V();
     }
 }

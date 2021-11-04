@@ -1,6 +1,5 @@
 public class IncorrectSemaphore implements ISemaphore{
     private boolean _state = true;
-    private int _waiting = 0; // czeka
 
     public IncorrectSemaphore(boolean initial_state){
         this._state = initial_state;
@@ -12,8 +11,7 @@ public class IncorrectSemaphore implements ISemaphore{
 
     @Override
     public synchronized void P() throws InterruptedException { // decrementation
-        if(!_state){
-            _waiting ++;
+        if(! _state){
             wait();
         }
         _state = false;
@@ -21,11 +19,11 @@ public class IncorrectSemaphore implements ISemaphore{
     }
 
     @Override
-    public synchronized void V(){ // incrementation
-        if(_waiting > 0){
-            notify();
-            _waiting--;
+    public synchronized void V() throws InterruptedException { // incrementation
+        if (_state) {
+            wait();
         }
         _state = true;
+        notify();
     }
 }

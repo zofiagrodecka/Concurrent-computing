@@ -11,31 +11,45 @@ public class Philosopher implements Runnable{
     private final Semaphore fork2;
     private final int id;
     private final Random random = new Random();
+    private final int maxCounter;
+    private long sumWaitingTime = 0;
+    private double[] averageWaitingTimes;
 
-    public Philosopher(Semaphore fork1, Semaphore fork2, int number){
+    public Philosopher(Semaphore fork1, Semaphore fork2, int number, int n_meals, double[] averageWaitingTimes){
         this.fork1 = fork1;
         this.fork2 = fork2;
         this.id = number;
+        this.maxCounter = n_meals;
+        this.averageWaitingTimes = averageWaitingTimes;
     }
 
-    public boolean isHungry() {
-        return hungry;
+    private double getAverageWaitingTime(){
+        return (double)sumWaitingTime/maxCounter;
     }
 
     public void run(){
         int eating_time;
+        long startTime;
+        long endTime;
+        long waitingTime;
+        int mealCounter = 0;
 
-        while(hungry){
+        startTime = System.currentTimeMillis();
+        while(mealCounter < maxCounter){
             try {
                 fork1.acquire();
-                //System.out.println("Podniosłem fork1. ID: " + id);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 System.exit(-1);
             }
             if(fork2.tryAcquire()){
+                endTime = System.currentTimeMillis();
+                waitingTime = endTime - startTime;
+                System.out.println("Waiting time: " + waitingTime);
+                sumWaitingTime += waitingTime;
                 eating_time = random.nextInt(MAX_EATING_TIME-MIN_EATING_TIME+1) + MIN_EATING_TIME;
                 System.out.println("Jem. ID: " + id + ". Eating time: " + eating_time);
+                mealCounter++;
                 try {
                     Thread.sleep(eating_time);
                 } catch (InterruptedException e) {
@@ -44,10 +58,12 @@ public class Philosopher implements Runnable{
                 hungry = false;
                 System.out.println("Skończyłem jeść. ID: " + id);
                 fork2.release();
+                startTime = System.currentTimeMillis();
             }
             fork1.release();
             hungry = true;
         }
+        averageWaitingTimes[id] = getAverageWaitingTime();
     }
 }
 

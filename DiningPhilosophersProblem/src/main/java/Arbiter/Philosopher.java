@@ -14,22 +14,39 @@ public class Philosopher implements Runnable{
     private final int id;
     private final Random random = new Random();
     private final Semaphore waiter;
+    private int mealCounter = 0;
+    private final int maxCounter;
+    private long sumWaitingTime = 0;
 
-    public Philosopher(Semaphore fork1, Semaphore fork2, Semaphore arbiter, int number){
+    public Philosopher(Semaphore fork1, Semaphore fork2, Semaphore arbiter, int number, int n_meals){
         this.fork1 = fork1;
         this.fork2 = fork2;
         this.id = number;
         this.waiter = arbiter;
+        this.maxCounter = n_meals;
+    }
+
+    public double getAverageWaitingTime(){
+        return (double)sumWaitingTime/maxCounter;
     }
 
     public void run(){
         int eating_time;
+        long startTime;
+        long endTime;
+        long waitingTime;
 
-        while(hungry){
+        while(mealCounter < maxCounter){
+            mealCounter++;
             try {
+                startTime = System.currentTimeMillis();
                 waiter.acquire();
                 fork1.acquire();
                 fork2.acquire();
+                    endTime = System.currentTimeMillis();
+                    waitingTime = endTime - startTime;
+                    System.out.println("Waiting time: " + waitingTime);
+                    sumWaitingTime += waitingTime;
                     eating_time = random.nextInt(MAX_EATING_TIME-MIN_EATING_TIME+1) + MIN_EATING_TIME;
                     System.out.println("Jem. ID: " + id + ". Eating time: " + eating_time);
                     try {
@@ -39,8 +56,8 @@ public class Philosopher implements Runnable{
                     }
                     hungry = false;
                     System.out.println("Skończyłem jeść. ID: " + id);
-                    fork2.release();
-                    fork1.release();
+                fork2.release();
+                fork1.release();
                 waiter.release();
                 hungry = true;
             } catch (InterruptedException e) {

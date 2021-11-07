@@ -8,13 +8,14 @@ public class Main {
         Thread[] philosophers = new Thread[n];
         Semaphore[] forks = new Semaphore[n];
         Semaphore waiter = new Semaphore(n-1);
+        int n_meals = 5;
 
         for(int i=0; i<n; i++){
             forks[i] = new Semaphore(1);
         }
 
         for(int i=0; i<n; i++){
-            philosophers[i] = new Thread(new Philosopher(forks[i], forks[(i+1) % n], waiter, i));
+            philosophers[i] = new Thread(new Philosopher(forks[i], forks[(i+1) % n], waiter, i, n_meals));
         }
 
         for(int i=0; i<n; i++){

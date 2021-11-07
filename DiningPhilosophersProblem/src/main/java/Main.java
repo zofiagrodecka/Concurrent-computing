@@ -10,10 +10,9 @@ public class Main {
             forks[i] = new Semaphore(1);
         }
 
-        for(int i=0; i<n-1; i++){
-            philosophers[i] = new Thread(new Philosopher(forks[i], forks[i+1], i));
+        for(int i=0; i<n; i++){
+            philosophers[i] = new Thread(new Philosopher(forks[i], forks[(i+1) % n], i));
         }
-        philosophers[n-1] = new Thread(new Philosopher(forks[n-1], forks[0], n-1));
 
         for(int i=0; i<n; i++){
             philosophers[i].start();

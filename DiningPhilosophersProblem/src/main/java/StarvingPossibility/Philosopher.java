@@ -1,3 +1,5 @@
+package StarvingPossibility;
+
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
@@ -46,11 +48,6 @@ public class Philosopher implements Runnable{
             fork1.release();
             hungry = true;
         }
-    }
-
-    public void rest(){
-        fork1.release();
-        hungry = true;
     }
 }
 

@@ -13,7 +13,7 @@ public class Philosopher implements Runnable{
     private final Semaphore fork2;
     private final int id;
     private final Random random = new Random();
-    private Semaphore waiter;
+    private final Semaphore waiter;
 
     public Philosopher(Semaphore fork1, Semaphore fork2, Semaphore arbiter, int number){
         this.fork1 = fork1;
@@ -27,16 +27,9 @@ public class Philosopher implements Runnable{
 
         while(hungry){
             try {
-                //System.out.println("Kelner " + waiter.availablePermits() );
                 waiter.acquire();
-                //System.out.println("Kelner po acquire " + waiter.availablePermits() );
                 fork1.acquire();
-                //System.out.println("ID: " + id + ". Podnoszę " + id + " widelec");
-
-                //System.out.println("Kelner " + waiter.availablePermits() );
-                waiter.tryAcquire();
-                if(fork2.tryAcquire()){
-                    //System.out.println("ID: " + id + ". Podnoszę drugi " + id + " widelec");
+                fork2.acquire();
                     eating_time = random.nextInt(MAX_EATING_TIME-MIN_EATING_TIME+1) + MIN_EATING_TIME;
                     System.out.println("Jem. ID: " + id + ". Eating time: " + eating_time);
                     try {
@@ -47,10 +40,7 @@ public class Philosopher implements Runnable{
                     hungry = false;
                     System.out.println("Skończyłem jeść. ID: " + id);
                     fork2.release();
-
-                }
-                waiter.release();
-                fork1.release();
+                    fork1.release();
                 waiter.release();
                 hungry = true;
             } catch (InterruptedException e) {

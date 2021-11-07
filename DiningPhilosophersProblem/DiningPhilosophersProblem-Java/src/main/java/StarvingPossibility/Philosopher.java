@@ -13,7 +13,7 @@ public class Philosopher implements Runnable{
     private final Random random = new Random();
     private final int maxCounter;
     private long sumWaitingTime = 0;
-    private double[] averageWaitingTimes;
+    private final double[] averageWaitingTimes;
 
     public Philosopher(Semaphore fork1, Semaphore fork2, int number, int n_meals, double[] averageWaitingTimes){
         this.fork1 = fork1;
@@ -45,16 +45,17 @@ public class Philosopher implements Runnable{
             if(fork2.tryAcquire()){
                 endTime = System.currentTimeMillis();
                 waitingTime = endTime - startTime;
-                System.out.println("Waiting time: " + waitingTime);
+                System.out.println("ID: " + id + ". Waiting time: " + waitingTime);
                 sumWaitingTime += waitingTime;
-                eating_time = random.nextInt(MAX_EATING_TIME-MIN_EATING_TIME+1) + MIN_EATING_TIME;
+                System.out.println("Jem. ID: " + id);
+                /*eating_time = random.nextInt(MAX_EATING_TIME-MIN_EATING_TIME+1) + MIN_EATING_TIME;
                 System.out.println("Jem. ID: " + id + ". Eating time: " + eating_time);
-                mealCounter++;
                 try {
                     Thread.sleep(eating_time);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
+                mealCounter++;
                 hungry = false;
                 System.out.println("Skończyłem jeść. ID: " + id);
                 fork2.release();

@@ -1,6 +1,5 @@
 package StarvingPossibility;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
@@ -34,15 +33,8 @@ public class Main {
             System.exit(-1);
         }
 
-
         try {
-            /*File file = new File("file1.txt");
-            if (file.createNewFile()) {
-                System.out.println("File created: " + file.getName());
-            } else {
-                System.out.println("File already exists.");
-            }*/
-            FileWriter writer = new FileWriter("file1.txt");
+            FileWriter writer = new FileWriter("../ChartsCreator/starving1.txt");
             for(int i=0; i<n; i++){
                 writer.write(String.valueOf((averageWaitingTimes[i])) + "\n");
             }
@@ -51,7 +43,6 @@ public class Main {
             e.printStackTrace();
             System.exit(-1);
         }
-
 
     }
 }

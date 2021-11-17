@@ -146,55 +146,69 @@ Philosopher.prototype.startAsym = function(count) {
 
 var Waiter = function(begin_state) {
     this.state = begin_state;
-    this.eatingPhilosophers = [];
-    this.waitingPhilosophers = [];
     return this;
 }
 
-/*Waiter.prototype.acquire = function(philosopherID, cb){
-    if(this.state > 0){
-        this.eatingPhilosophers.push(philosopherID);
-    }
-    else{
+Waiter.prototype.acquire = function(cb){
+    var waiter = this,
+    delay = 1;
 
+    function acquire_fork() {
+        if(waiter.state > 0){
+            waiter.state--;
+		    cb();
+        }
+        else {
+            delay *= 2;
+            setTimeout(acquire_fork, delay);
+        }
     }
+
+    setTimeout(acquire_fork, delay);
+}
+
+Waiter.prototype.release = function(){
+    this.state++; 
 }
 
 Philosopher.prototype.startConductor = function(count, waiter) {
     var forks = this.forks,
         f1 = this.f1,
         f2 = this.f2,
-        waiter = this.waiter;
-        id = this.id;
+        id = this.id,
     
     // zaimplementuj rozwiązanie z kelnerem
     // każdy filozof powinien 'count' razy wykonywać cykl
     // podnoszenia widelców -- jedzenia -- zwalniania widelców
 
     releaseForks = function(){
+        console.log("ID: " + id + " finished eating.");
         forks[f1].release();
         forks[f2].release();
-        console.log("ID: " + id + " finished eating.");
-    }
+    },
 
     loop = function(count){
+        //console.log("ID: " + id + ". Count: " + count);
         if(count > 0){
-            waiter.acquire()
-            forks[f1].acquire(function() {
-                console.log('ID:' + id + '. Has left knife');
-                forks[f2].acquire(function(){
-                    console.log('ID:' + id + '. Has right knife');
-                    setTimeout(function(){
-                        releaseForks();
-                        loop(count-1);
-                    }, 1);
-                })
+            waiter.acquire(function() {
+                console.log("Waiter acquired: " + id);
+                forks[f1].acquire(function() {
+                    console.log('ID: ' + id + '. Raised left knife');
+                    forks[f2].acquire(function(){
+                        console.log('ID: ' + id + '. Raised right knife');
+                        setTimeout(function(){
+                            releaseForks();
+                            waiter.release();
+                            loop(count-1);
+                        }, Math.floor(Math.random() * (this.MAX_EATING_TIME - this.MIN_EATING_TIME + 1) + this.MIN_EATING_TIME));
+                    })
+                });
             });
         }
     };
 
-    setTimeout(loop, 1, count);
-}*/
+    setTimeout(loop, 0, count);    
+}
 
 
 // TODO: wersja z jednoczesnym podnoszeniem widelców
@@ -248,7 +262,7 @@ Philosopher.prototype.startSimult = function(count){
             });
         }
     };
-    
+
     setTimeout(loop, 0, count);
 }
 
@@ -265,8 +279,11 @@ for (var i = 0; i < N; i++) {
     philosophers.push(new Philosopher(i, forks));
 }
 
+var waitress = new Waiter(N-1);
+
 for (var i = 0; i < N; i++) {
     //philosophers[i].startNaive(meals);
     //philosophers[i].startAsym(meals);
-    philosophers[i].startSimult(10);
+    //philosophers[i].startSimult(meals);
+    philosophers[i].startConductor(meals, waitress);
 }

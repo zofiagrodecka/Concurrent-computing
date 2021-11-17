@@ -14,6 +14,11 @@ console.log("My program");
 //    implementacji zmierz średni czas oczekiwania każdego filozofa na dostęp 
 //    do widelców. Wyniki przedstaw na wykresach.
 
+var N = 5;
+var meals = 10;
+var averageWaitingTimes = [];
+const fs = require("fs");
+
 var Fork = function() {
     this.state = 0;
     return this;
@@ -27,15 +32,6 @@ Fork.prototype.acquire = function(cb) {
     //    i ponawia próbę, itd.
     
     var fork = this,
-	/*acquire_fork = function (waitingTime) {
-        if (fork.state == 0) {
-            fork.state = 1;
-            cb();
-        }
-        else {
-            setTimeout(acquire_fork, (waitingTime * 2));
-        }
-	},*/
     delay = 1;
 
     function acquire_fork() {
@@ -50,9 +46,6 @@ Fork.prototype.acquire = function(cb) {
     }
 
     setTimeout(acquire_fork, delay);
-
-    //loop(1); // jednomilisekundowy timeout na początek*/
-    //setTimeout(acquire_fork, 1);
 }
 
 Fork.prototype.release = function() { 
@@ -65,7 +58,8 @@ var Philosopher = function(id, forks) {
     this.f1 = id % forks.length;
     this.f2 = (id+1) % forks.length;
     this.MIN_EATING_TIME = 10;
-    this.MAX_EATING_TIME = 30;
+    this.MAX_EATING_TIME = 20;
+    this.sumWaitingTime = 0;
     return this;
 }
 
@@ -96,7 +90,7 @@ Philosopher.prototype.startNaive = function(count) {
                         releaseForks();
                         loop(count-1);
                     }, Math.floor(Math.random() * (this.MAX_EATING_TIME - this.MIN_EATING_TIME + 1) + this.MIN_EATING_TIME));
-                })
+                });
             });
         }
     };
@@ -110,33 +104,51 @@ Philosopher.prototype.startAsym = function(count) {
         f1 = this.id % 2 == 0 ? this.f2 : this.f1,
         f2 = this.id % 2 == 0 ? this.f1 : this.f2,
         id = this.id,
+
+        startTime = 0,
+        endTime = 0,
+        sumWaitingTime = this.sumWaitingTime,
     
     // zaimplementuj rozwiązanie asymetryczne
     // każdy filozof powinien 'count' razy wykonywać cykl
     // podnoszenia widelców -- jedzenia -- zwalniania widelców
 
     releaseForks = function(){
-        console.log("ID: " + id + " finished eating.");
+        //console.log("ID: " + id + " finished eating.");
         forks[f1].release();
         forks[f2].release();
     },
 
     loop = function(count){
         if(count > 0){
+            startTime = new Date().getTime();
             forks[f1].acquire(function() {
-                if(id % 2 == 0){
+                /*if(id % 2 == 0){
                     console.log('ID: ' + id + '. Has right knife');
                 }
                 else{
                     console.log('ID: ' + id + '. Has left knife');
-                }
+                }*/
                 forks[f2].acquire(function(){
-                    console.log('ID: ' + id + '. Raised right knife');
+                    endTime = new Date().getTime();
+                    sumWaitingTime += (endTime - startTime);
+                    //console.log('ID: ' + id + '. Raised right knife.  Waiting time: ' + (endTime - startTime));
                     setTimeout(function(){
                         releaseForks();
                         loop(count-1);
                     }, Math.floor(Math.random() * (this.MAX_EATING_TIME - this.MIN_EATING_TIME + 1) + this.MIN_EATING_TIME));
-                })
+                });
+            });
+        }
+        else{
+            //averageWaitingTimes.push(this.sumWaitingTime/meals);
+            console.log("Time: " + (sumWaitingTime/meals));
+            time = (sumWaitingTime/meals);
+            averageWaitingTimes.push(time);
+            fs.appendFile("demo.txt", time.toString() + '\n', "utf8", (error, data) => {
+                console.log("Write complete");
+                //console.log(error);
+                //console.log(data);
             });
         }
     };
@@ -267,10 +279,9 @@ Philosopher.prototype.startSimult = function(count){
 }
 
 
-var N = 5;
-var meals = 10;
 var forks = [];
 var philosophers = []
+
 for (var i = 0; i < N; i++) {
     forks.push(new Fork());
 }
@@ -281,9 +292,29 @@ for (var i = 0; i < N; i++) {
 
 var waitress = new Waiter(N-1);
 
+function printTimes(){
+    for(var i=0; i<N; i++){
+        console.log(averageWaitingTimes[i]);
+    }
+}
+
+
+/*function run(cb){
+    for (var i = 0; i < N; i++) {
+        //philosophers[i].startNaive(meals);
+        philosophers[i].startAsym(meals);
+        //philosophers[i].startSimult(meals);
+        //philosophers[i].startConductor(meals, waitress);
+    };
+    cb();
+}
+
+run(printTimes);*/
+
 for (var i = 0; i < N; i++) {
     //philosophers[i].startNaive(meals);
-    //philosophers[i].startAsym(meals);
+    philosophers[i].startAsym(meals);
     //philosophers[i].startSimult(meals);
-    philosophers[i].startConductor(meals, waitress);
-}
+    //philosophers[i].startConductor(meals, waitress);
+};
+

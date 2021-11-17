@@ -103,8 +103,8 @@ Philosopher.prototype.startNaive = function(count) {
 
 Philosopher.prototype.startAsym = function(count) {
     var forks = this.forks,
-        f1 = this.id % 2 == 0 ? this.f1 : this.f2,
-        f2 = this.id % 2 == 0 ? this.f2 : this.f1,
+        f1 = this.id % 2 == 0 ? this.f2 : this.f1,
+        f2 = this.id % 2 == 0 ? this.f1 : this.f2,
         id = this.id,
     
     // zaimplementuj rozwiązanie asymetryczne
@@ -112,10 +112,10 @@ Philosopher.prototype.startAsym = function(count) {
     // podnoszenia widelców -- jedzenia -- zwalniania widelców
 
     releaseForks = function(){
+        console.log("ID: " + id + " finished eating.");
         forks[f1].release();
         forks[f2].release();
-        console.log("ID: " + id + " finished eating.");
-    }
+    },
 
     loop = function(count){
         if(count > 0){
@@ -127,7 +127,7 @@ Philosopher.prototype.startAsym = function(count) {
                     console.log('ID: ' + id + '. Has left knife');
                 }
                 forks[f2].acquire(function(){
-                    console.log('ID: ' + id + ' starts eating');
+                    console.log('ID: ' + id + '. Raised right knife');
                     setTimeout(function(){
                         releaseForks();
                         loop(count-1);
@@ -247,9 +247,7 @@ Philosopher.prototype.startSimult = function(count){
             acquireSimult(this.f1, this.f2, function(){
                 console.log('ID: ' + this.id + '. Starts eating');
                 setTimeout(function(){
-                    this.f1.release();
-                    this.f2.release();
-                    console.log("ID: " + this.id + " finished eating.");
+                    releaseForks();
                     loop(count-1);
                 }, Math.floor(Math.random() * (this.MAX_EATING_TIME - this.MIN_EATING_TIME + 1) + this.MIN_EATING_TIME));
             })
@@ -288,7 +286,7 @@ for (var i = 0; i < N; i++) {
 }
 
 for (var i = 0; i < N; i++) {
-    philosophers[i].startNaive(meals);
-    //philosophers[i].startAsym(10);
+    //philosophers[i].startNaive(meals);
+    philosophers[i].startAsym(meals);
     //philosophers[i].startSimult(10);
 }

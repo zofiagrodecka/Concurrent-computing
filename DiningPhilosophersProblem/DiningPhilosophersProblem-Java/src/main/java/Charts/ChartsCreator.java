@@ -9,22 +9,31 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.RefineryUtilities;
+
+import java.io.*;
 import java.util.concurrent.Semaphore;
 
 
 public class ChartsCreator {
-    private final double[] averageWaitingTimesStarving;
-    private final double[] averageWaitingTimesArbiter;
+    private double[] averageWaitingTimesStarving;
+    private double[] averageWaitingTimesArbiter;
+    private double[][] jstimes;
     private final JFreeChart chart;
 
     public ChartsCreator(double[] averageWaitingTimes1, double[] averageWaitingTimes2) {
         this.averageWaitingTimesStarving = averageWaitingTimes1;
         this.averageWaitingTimesArbiter = averageWaitingTimes2;
-        CategoryDataset dataset = createDataset();
-        this.chart = createChart(dataset);
+        CategoryDataset dataset = createDatasetJava();
+        this.chart = createChart(dataset, "Porównanie czasów oczekiwania filozofów w Javie");
     }
 
-    private CategoryDataset createDataset() {
+    public ChartsCreator(double[][] times) {
+        this.jstimes = times;
+        CategoryDataset dataset = createDatasetJS();
+        this.chart = createChart(dataset, "Porównanie czasów oczekiwania filozofów w JavaScripcie");
+    }
+
+    private CategoryDataset createDatasetJava() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         for(int i=0; i<averageWaitingTimesStarving.length; i++){
@@ -38,9 +47,27 @@ public class ChartsCreator {
         return dataset;
     }
 
-    private static JFreeChart createChart(CategoryDataset dataset) {
-       JFreeChart chart = ChartFactory.createBarChart3D("Porównanie średnich czasów oczekiwania filozofów",
-               "Indeks filozofa", "Czas [ms]", dataset, PlotOrientation.VERTICAL, true, true, false);
+    private CategoryDataset createDatasetJS() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        for(int i=0; i<jstimes[0].length; i++){
+            dataset.addValue(jstimes[0][i], "Rozwiązanie asymetryczne", String.valueOf(i));
+        }
+
+        for(int i=0; i<jstimes[1].length; i++){
+            dataset.addValue(jstimes[1][i], "Rozwiązanie z arbitrem", String.valueOf(i));
+        }
+
+        for(int i=0; i<jstimes[2].length; i++){
+            dataset.addValue(jstimes[2][i], "Rozwiązanie z jednoczesnym podnoszeniem widelców", String.valueOf(i));
+        }
+
+        return dataset;
+    }
+
+    private static JFreeChart createChart(CategoryDataset dataset, String title) {
+       JFreeChart chart = ChartFactory.createBarChart3D(title, "Indeks filozofa",
+               "Czas [ms]", dataset, PlotOrientation.VERTICAL, true, true, false);
        return chart;
     }
 
@@ -58,7 +85,7 @@ public class ChartsCreator {
         int n_meals = 10;
 
         // Starving
-        Thread[] starvingPhilosophers = new Thread[n];
+        /*Thread[] starvingPhilosophers = new Thread[n];
         Semaphore[] starvingForks = new Semaphore[n];
 
         for(int i=0; i<n; i++){
@@ -80,10 +107,10 @@ public class ChartsCreator {
         } catch (InterruptedException e) {
             e.printStackTrace();
             System.exit(-1);
-        }
+        }*/
 
         // Arbiter
-        Thread[] arbiterPhilosophers = new Thread[n];
+        /*Thread[] arbiterPhilosophers = new Thread[n];
         Semaphore[] arbiterForks = new Semaphore[n];
         Semaphore waiter = new Semaphore(n-1);
 
@@ -109,6 +136,51 @@ public class ChartsCreator {
         }
 
         ChartsCreator creator = new ChartsCreator(starvingTimes, arbiterTimes);
+        creator.showChart();*/
+
+        // JavaScript
+        final int n_graphs = 3; // liczba wariantów implementacji
+        String text;
+        int w = 0, k = 0;
+        BufferedReader reader = null;
+        double[][] times = new double[n_graphs][n];
+        File file = new File("../DiningPhilosophersProblem-JS/asymetric.txt");
+        for(int i=0; i<3; i++){
+            reader = null;
+            k = 0;
+
+            try {
+                reader = new BufferedReader(new FileReader(file));
+                text = null;
+                while ((text = reader.readLine()) != null) {
+                    times[w][k] = Double.parseDouble(text);
+                    System.out.println(times[w][k]);
+                    k++;
+                }
+                w++;
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.exit(-1);
+                    }
+                }
+            }
+
+            if(i == 1){
+                file = new File("../DiningPhilosophersProblem-JS/conductor.txt");
+            }
+            else if(i==2){
+                file = new File("../DiningPhilosophersProblem-JS/simultaneous.txt");
+            }
+        }
+
+        ChartsCreator creator = new ChartsCreator(times);
         creator.showChart();
     }
 

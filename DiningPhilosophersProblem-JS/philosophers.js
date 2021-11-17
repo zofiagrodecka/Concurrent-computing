@@ -79,6 +79,12 @@ Philosopher.prototype.startNaive = function(count) {
     // każdy filozof powinien 'count' razy wykonywać cykl
     // podnoszenia widelców -- jedzenia -- zwalniania widelców
 
+    releaseForks = function(){
+        console.log("ID: " + id + " finished eating.");
+        forks[f1].release();
+        forks[f2].release();
+    },
+
     loop = function(count){
         //console.log("ID: " + id + ". Count: " + count);
         if(count > 0){
@@ -87,9 +93,7 @@ Philosopher.prototype.startNaive = function(count) {
                 forks[f2].acquire(function(){
                     console.log('ID: ' + id + '. Raised right knife');
                     setTimeout(function(){
-                        console.log("ID: " + id + " finished eating.");
-                        forks[f1].release();
-                        forks[f2].release();
+                        releaseForks();
                         loop(count-1);
                     }, Math.floor(Math.random() * (this.MAX_EATING_TIME - this.MIN_EATING_TIME + 1) + this.MIN_EATING_TIME));
                 })
@@ -147,7 +151,7 @@ var Waiter = function(begin_state) {
     return this;
 }
 
-Waiter.prototype.acquire = function(philosopherID, cb){
+/*Waiter.prototype.acquire = function(philosopherID, cb){
     if(this.state > 0){
         this.eatingPhilosophers.push(philosopherID);
     }
@@ -190,7 +194,7 @@ Philosopher.prototype.startConductor = function(count, waiter) {
     };
 
     setTimeout(loop, 1, count);
-}
+}*/
 
 
 // TODO: wersja z jednoczesnym podnoszeniem widelców
@@ -203,31 +207,22 @@ function acquireSimult(fork1, fork2, cb) {
     // 1. przed pierwszą próbą podniesienia widelca Filozof odczekuje 1ms
     // 2. gdy próba jest nieudana, zwiększa czas oczekiwania dwukrotnie
     //    i ponawia próbę, itd.
+    
+    var delay = 1;
 
-    var loopSimult = function(waitingTime){
+    function acquire_fork() {
         if(fork1.state == 0 && fork2.state == 0){
             fork1.state = 1;
             fork2.state = 1;
-            cb();
+		    cb();
         }
-        else{
-            setTimeout(acquireSimult, waitingTime*2);
+        else {
+            delay *= 2;
+            setTimeout(acquire_fork, delay);
         }
     }
 
-    setTimeout(loopSimult, 1);
-    /*var loop = function (waitTime) {
-        setTimeout(function () {
-            if (fork1.state == 0 && fork2.state == 0) {
-            fork1.state = fork2.state = 1;
-            cb();
-            }
-            else
-            loop (waitTime * 2);
-        }, waitTime);
-        };
-    
-        loop(1); // jednomilisekundowy timeout na początek*/
+    setTimeout(acquire_fork, delay);
 }
 
 Philosopher.prototype.startSimult = function(count){
@@ -237,39 +232,24 @@ Philosopher.prototype.startSimult = function(count){
         id = this.id,
 
     releaseForks = function(){
+        console.log("ID: " + id + " finished eating.");
         forks[f1].release();
         forks[f2].release();
-        console.log("ID: " + this.id + " finished eating.");
-    }
+    },
 
     loop = function(count){
         if(count > 0){
-            acquireSimult(this.f1, this.f2, function(){
-                console.log('ID: ' + this.id + '. Starts eating');
+            acquireSimult(forks[f1], forks[f2], function(){
+                console.log('ID: ' + id + '. Starts eating');
                 setTimeout(function(){
                     releaseForks();
                     loop(count-1);
                 }, Math.floor(Math.random() * (this.MAX_EATING_TIME - this.MIN_EATING_TIME + 1) + this.MIN_EATING_TIME));
-            })
+            });
         }
-    }
-
-    loopSimult = function (count) {
-	    if (count > 0)
-		acquireSimult(forks[f1], forks[f2], function () {
-		    console.log("filozof " + id + " wziął widelce i zaczyna jeść");
-		    setTimeout(function () {
-			forks[f1].release();
-			forks[f2].release();
-			console.log("filozof " + id + " kończy jeść");
-			// zakładamy, że myślenie jest reprezentowane przez pierwszy,
-			// jednomilisekundowy timeout w acquire2()
-			loopSimult(count - 1);
-		    }, 1) // zakładamy, że jedzenie trwa 1 milisekundę
-		})
-	};
-
-    setTimeout(loopSimult, 0, count);
+    };
+    
+    setTimeout(loop, 0, count);
 }
 
 
@@ -287,6 +267,6 @@ for (var i = 0; i < N; i++) {
 
 for (var i = 0; i < N; i++) {
     //philosophers[i].startNaive(meals);
-    philosophers[i].startAsym(meals);
-    //philosophers[i].startSimult(10);
+    //philosophers[i].startAsym(meals);
+    philosophers[i].startSimult(10);
 }

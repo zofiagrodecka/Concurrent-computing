@@ -6,8 +6,6 @@ import java.util.concurrent.Semaphore;
 public class PhilosopherArbiter implements Runnable{
     private final int MIN_EATING_TIME = 10;
     private final int MAX_EATING_TIME = 20; // ms
-    private final int MIN_FULL_TIME = 500;
-    private final int MAX_FULL_TIME = 100;
     private boolean hungry = true;
     private final Semaphore fork1;
     private final Semaphore fork2;

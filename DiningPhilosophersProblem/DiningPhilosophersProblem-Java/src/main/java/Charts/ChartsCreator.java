@@ -85,7 +85,7 @@ public class ChartsCreator {
         int n_meals = 10;
 
         // Starving
-        /*Thread[] starvingPhilosophers = new Thread[n];
+        Thread[] starvingPhilosophers = new Thread[n];
         Semaphore[] starvingForks = new Semaphore[n];
 
         for(int i=0; i<n; i++){
@@ -107,10 +107,10 @@ public class ChartsCreator {
         } catch (InterruptedException e) {
             e.printStackTrace();
             System.exit(-1);
-        }*/
+        }
 
         // Arbiter
-        /*Thread[] arbiterPhilosophers = new Thread[n];
+        Thread[] arbiterPhilosophers = new Thread[n];
         Semaphore[] arbiterForks = new Semaphore[n];
         Semaphore waiter = new Semaphore(n-1);
 
@@ -136,28 +136,32 @@ public class ChartsCreator {
         }
 
         ChartsCreator creator = new ChartsCreator(starvingTimes, arbiterTimes);
-        creator.showChart();*/
+        creator.showChart();
 
         // JavaScript
         final int n_graphs = 3; // liczba wariantów implementacji
         String text;
-        int w = 0, k = 0;
+        int w = 0, j = 0, k = 0;
         BufferedReader reader = null;
         double[][] times = new double[n_graphs][n];
         File file = new File("../DiningPhilosophersProblem-JS/asymetric.txt");
         for(int i=0; i<3; i++){
             reader = null;
-            k = 0;
+            j = 0;
 
             try {
                 reader = new BufferedReader(new FileReader(file));
                 text = null;
                 while ((text = reader.readLine()) != null) {
-                    times[w][k] = Double.parseDouble(text);
-                    System.out.println(times[w][k]);
-                    k++;
+                    if(j % 2 == 0){
+                        k = Integer.parseInt(text);
+                    }
+                    else{
+                        times[w][k] = Double.parseDouble(text);
+                        System.out.println(times[w][k]);
+                    }
+                    j++;
                 }
-                w++;
             } catch (IOException e) {
                 e.printStackTrace();
                 System.exit(-1);
@@ -172,16 +176,17 @@ public class ChartsCreator {
                 }
             }
 
-            if(i == 1){
+            w++;
+            if(i == 0){
                 file = new File("../DiningPhilosophersProblem-JS/conductor.txt");
             }
-            else if(i==2){
+            else if(i == 1){
                 file = new File("../DiningPhilosophersProblem-JS/simultaneous.txt");
             }
         }
 
-        ChartsCreator creator = new ChartsCreator(times);
-        creator.showChart();
+        ChartsCreator creator2 = new ChartsCreator(times);
+        creator2.showChart();
     }
 
 }

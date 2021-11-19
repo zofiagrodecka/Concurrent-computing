@@ -1,4 +1,3 @@
-console.log("My program");
 // Teoria Współbieżnośi, implementacja problemu 5 filozofów w node.js
 // Opis problemu: http://en.wikipedia.org/wiki/Dining_philosophers_problem
 //   https://pl.wikipedia.org/wiki/Problem_ucztuj%C4%85cych_filozof%C3%B3w
@@ -16,7 +15,6 @@ console.log("My program");
 
 var N = 5;
 var meals = 10;
-var averageWaitingTimes = [];
 const fs = require("fs");
 
 var Fork = function() {
@@ -80,7 +78,6 @@ Philosopher.prototype.startNaive = function(count) {
     },
 
     loop = function(count){
-        //console.log("ID: " + id + ". Count: " + count);
         if(count > 0){
             forks[f1].acquire(function() {
                 console.log('ID: ' + id + '. Raised left knife');
@@ -114,7 +111,7 @@ Philosopher.prototype.startAsym = function(count) {
     // podnoszenia widelców -- jedzenia -- zwalniania widelców
 
     releaseForks = function(){
-        //console.log("ID: " + id + " finished eating.");
+        console.log("ID: " + id + " finished eating.");
         forks[f1].release();
         forks[f2].release();
     },
@@ -123,16 +120,16 @@ Philosopher.prototype.startAsym = function(count) {
         if(count > 0){
             startTime = new Date().getTime();
             forks[f1].acquire(function() {
-                /*if(id % 2 == 0){
+                if(id % 2 == 0){
                     console.log('ID: ' + id + '. Has right knife');
                 }
                 else{
                     console.log('ID: ' + id + '. Has left knife');
-                }*/
+                }
                 forks[f2].acquire(function(){
                     endTime = new Date().getTime();
                     sumWaitingTime += (endTime - startTime);
-                    //console.log('ID: ' + id + '. Raised right knife.  Waiting time: ' + (endTime - startTime));
+                    console.log('ID: ' + id + '. Raised right knife.  Waiting time: ' + (endTime - startTime));
                     setTimeout(function(){
                         releaseForks();
                         loop(count-1);
@@ -144,13 +141,14 @@ Philosopher.prototype.startAsym = function(count) {
             // Zapis średnich czasów do pliku
             console.log("Time: " + (sumWaitingTime/meals));
             time = (sumWaitingTime/meals);
-            fs.appendFile("asymetric.txt", time.toString() + '\n', "utf8", (error, data) => {
+            fs.appendFile("asymetric.txt", id.toString() + '\n' + time.toString() + '\n', "utf8", (error, data) => {
                 console.log("Write complete");
-                //console.log(error);
-                //console.log(data);
             });
         }
     };
+
+    // usuwanie początkowej zawartości pliku
+    fs.writeFile("asymetric.txt", '', "utf8", (error, data) => {});
 
     setTimeout(loop, 0, count);
 }
@@ -196,7 +194,7 @@ Philosopher.prototype.startConductor = function(count, waiter) {
     // podnoszenia widelców -- jedzenia -- zwalniania widelców
 
     releaseForks = function(){
-        //console.log("ID: " + id + " finished eating.");
+        console.log("ID: " + id + " finished eating.");
         forks[f1].release();
         forks[f2].release();
     },
@@ -205,13 +203,13 @@ Philosopher.prototype.startConductor = function(count, waiter) {
         if(count > 0){
             startTime = new Date().getTime();
             waiter.acquire(function() {
-                //console.log("Waiter acquired: " + id);
+                console.log("Waiter acquired: " + id);
                 forks[f1].acquire(function() {
-                    //console.log('ID: ' + id + '. Raised left knife');
+                    console.log('ID: ' + id + '. Raised left knife');
                     forks[f2].acquire(function(){
                         endTime = new Date().getTime();
                         sumWaitingTime += (endTime - startTime);
-                        //console.log('ID: ' + id + '. Raised right knife');
+                        console.log('ID: ' + id + '. Raised right knife');
                         setTimeout(function(){
                             releaseForks();
                             waiter.release();
@@ -225,13 +223,13 @@ Philosopher.prototype.startConductor = function(count, waiter) {
             // Zapis średnich czasów do pliku
             console.log("Time: " + (sumWaitingTime/meals));
             time = (sumWaitingTime/meals);
-            fs.appendFile("conductor.txt", time.toString() + '\n', "utf8", (error, data) => {
-                console.log("Write complete");
-                //console.log(error);
-                //console.log(data);
-            });
+            fs.appendFile("conductor.txt", id.toString() + '\n' + time.toString() + '\n', "utf8", (error, data) => {
+                console.log("Write complete");});
         }
     };
+
+    // usuwanie początkowej zawartości pliku
+    fs.writeFile("conductor.txt", '', "utf8", (error, data) => {});
 
     setTimeout(loop, 0, count);    
 }
@@ -275,7 +273,7 @@ Philosopher.prototype.startSimult = function(count){
         endTime = 0,
 
     releaseForks = function(){
-        //console.log("ID: " + id + " finished eating.");
+        console.log("ID: " + id + " finished eating.");
         forks[f1].release();
         forks[f2].release();
     },
@@ -286,7 +284,7 @@ Philosopher.prototype.startSimult = function(count){
             acquireSimult(forks[f1], forks[f2], function(){
                 endTime = new Date().getTime();
                 sumWaitingTime += (endTime - startTime);
-                //console.log('ID: ' + id + '. Starts eating');
+                console.log('ID: ' + id + '. Starts eating');
                 setTimeout(function(){
                     releaseForks();
                     loop(count-1);
@@ -297,13 +295,14 @@ Philosopher.prototype.startSimult = function(count){
             // Zapis średnich czasów do pliku
             console.log("Time: " + (sumWaitingTime/meals));
             time = (sumWaitingTime/meals);
-            fs.appendFile("simultaneous.txt", time.toString() + '\n', "utf8", (error, data) => {
-                console.log("Write complete");
-                //console.log(error);
-                //console.log(data);
-            });
+            fs.appendFile("simultaneous.txt", id.toString() + '\n' + time.toString() + '\n', "utf8", (error, data) => {});
         }
     };
+
+    // usuwanie początkowej zawartości pliku
+    fs.writeFile("simultaneous.txt", '', "utf8", (error, data) => {
+        console.log("Write complete");
+    });
 
     setTimeout(loop, 0, count);
 }
@@ -322,29 +321,22 @@ for (var i = 0; i < N; i++) {
 
 var waitress = new Waiter(N-1);
 
-function printTimes(){
-    for(var i=0; i<N; i++){
-        console.log(averageWaitingTimes[i]);
-    }
-}
-
-
-/*function run(cb){
-    for (var i = 0; i < N; i++) {
-        //philosophers[i].startNaive(meals);
-        philosophers[i].startAsym(meals);
-        //philosophers[i].startSimult(meals);
-        //philosophers[i].startConductor(meals, waitress);
-    };
-    cb();
-}
-
-run(printTimes);*/
-
 for (var i = 0; i < N; i++) {
-    //philosophers[i].startNaive(meals);
-    //philosophers[i].startAsym(meals);
-    //philosophers[i].startSimult(meals);
-    philosophers[i].startConductor(meals, waitress);
+    if(process.argv[2] == 'naive'){
+        philosophers[i].startNaive(meals);
+    }
+    else if(process.argv[2] == 'asymetric'){
+        philosophers[i].startAsym(meals);
+    }
+    else if(process.argv[2] == 'simultaneous'){
+        philosophers[i].startSimult(meals);
+    }
+    else if(process.argv[2] == 'conductor'){
+        philosophers[i].startConductor(meals, waitress);
+    }
+    else{
+        console.log('Wrong invocation arguments');
+        process.exit(1);
+    }
 };
 

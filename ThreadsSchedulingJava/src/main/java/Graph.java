@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Graph {
     private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
@@ -33,6 +34,47 @@ public class Graph {
         transitiveReduction();
     }
 
+    public ArrayList<ArrayList<Vertex>> FNF(){
+        ArrayList<Vertex> topologicalSortedVertices = topologicalSort();
+        System.out.println(topologicalSortedVertices);
+        Collections.reverse(topologicalSortedVertices);
+        Vertex startVertex = topologicalSortedVertices.get(0);
+        calculateMaxLevel(startVertex, 0);
+
+        int maxNumLevels = maxNumberOfLevels();
+        ArrayList<ArrayList<Vertex>> result = new ArrayList<>(maxNumLevels+1);
+        for(int i=0; i < maxNumLevels+1; i++) {
+            result.add(new ArrayList<Vertex>());
+        }
+
+        for(Vertex v : topologicalSortedVertices){
+            result.get(v.getMaxLevel()).add(v);
+        }
+
+        return result;
+    }
+
+    private void calculateMaxLevel(Vertex v, int level){
+        if(v.getMaxLevel() < level){
+            v.setMaxLevel(level);
+        }
+
+        ArrayList<Vertex> adjacent = adjacentVertices(v);
+        for(Vertex neighbour : adjacent){
+            calculateMaxLevel(neighbour, level+1);
+        }
+    }
+
+    private int maxNumberOfLevels(){
+        int max = -1;
+        for(Vertex v : vertices){
+            if(v.getMaxLevel() > max){
+                max = v.getMaxLevel();
+            }
+        }
+        return max;
+    }
+
     private void transitiveReduction() {
         ArrayList<Vertex> visited = new ArrayList<Vertex>();
         ArrayList<Edge> toBeRemoved = new ArrayList<Edge>();
@@ -42,7 +84,7 @@ public class Graph {
         for(Vertex u : vertices){
             adjacent = adjacentVertices(u);
             for(Vertex neighbour : adjacent){
-                DFSVisit(neighbour, visited);
+                DFSVisit(neighbour, visited, null);
             }
 
             for(Vertex v : visited){
@@ -79,14 +121,20 @@ public class Graph {
     }
 
 
-    private void DFSVisit(Vertex u, ArrayList<Vertex> visited){
+    private void DFSVisit(Vertex u, ArrayList<Vertex> visited, ArrayList<Vertex> stack){
         u.setVisited(true);
         ArrayList<Vertex> adjacentVertices = adjacentVertices(u);
         for(Vertex v : adjacentVertices){
             if(!v.isVisited()){
-                visited.add(v);
-                DFSVisit(v, visited);
+                if(visited != null){
+                    visited.add(v);
+                }
+                DFSVisit(v, visited, stack);
             }
+        }
+
+        if(stack != null){
+            stack.add(u);
         }
     }
 
@@ -100,9 +148,19 @@ public class Graph {
         }
     }*/
 
-    /*private ArrayList<Vertex> topologicalSort(){
+    private ArrayList<Vertex> topologicalSort(){
+        ArrayList<Vertex> stack = new ArrayList<Vertex>();
+        for(Vertex v : vertices){
+            v.setVisited(false);
+        }
 
-    }*/
+        for(Vertex v : vertices){
+            if(!v.isVisited()){
+                DFSVisit(v, null, stack);
+            }
+        }
+        return stack;
+    }
 
     public String toString(){
         return edges.toString();

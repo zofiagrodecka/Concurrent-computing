@@ -17,5 +17,6 @@ public class Main {
         System.out.println(set);
         Graph dikertGrapf = new Graph("baddabcd", set);
         System.out.println(dikertGrapf);
+        System.out.println(dikertGrapf.FNF());
     }
 }

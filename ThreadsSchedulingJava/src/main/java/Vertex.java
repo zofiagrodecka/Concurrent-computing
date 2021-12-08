@@ -17,8 +17,16 @@ public class Vertex {
         return label;
     }
 
+    public int getMaxLevel(){
+        return maxLevel;
+    }
+
     public void setVisited(boolean visited){
         this.visited = visited;
+    }
+
+    public void setMaxLevel(int value){
+        this.maxLevel = value;
     }
 
     public boolean equals(Object other){

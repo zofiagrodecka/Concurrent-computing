@@ -38,9 +38,7 @@ public class Graph {
         ArrayList<Vertex> topologicalSortedVertices = topologicalSort();
         System.out.println(topologicalSortedVertices);
         Collections.reverse(topologicalSortedVertices);
-        Vertex startVertex = topologicalSortedVertices.get(0);
-        calculateMaxLevel(startVertex, 0);
-
+        calculateMaxLevels();
         int maxNumLevels = maxNumberOfLevels();
         ArrayList<ArrayList<Vertex>> result = new ArrayList<>(maxNumLevels+1);
         for(int i=0; i < maxNumLevels+1; i++) {
@@ -52,6 +50,30 @@ public class Graph {
         }
 
         return result;
+    }
+
+    private void calculateMaxLevels(){
+        ArrayList<Vertex> topologicalSortedVertices = topologicalSort();
+        System.out.println(topologicalSortedVertices);
+        Collections.reverse(topologicalSortedVertices);
+
+        for(Vertex v : vertices){
+            v.setVisited(false);
+        }
+
+        for(Vertex v : topologicalSortedVertices){
+            int level;
+            if(!v.isVisited()){
+                v.setVisited(true);
+                if(v.getMaxLevel() == -1){
+                    level = 0;
+                }
+                else{
+                    level = v.getMaxLevel();
+                }
+                calculateMaxLevel(v, level);
+            }
+        }
     }
 
     private void calculateMaxLevel(Vertex v, int level){

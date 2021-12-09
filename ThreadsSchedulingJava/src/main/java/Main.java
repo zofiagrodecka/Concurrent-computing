@@ -41,15 +41,15 @@ public class Main {
         }
 
         Alphabet alphabet = new Alphabet(allTasks);
-        System.out.println("\nAlfabet: " + allTasks);
-        System.out.println("Słowo: " + word);
+        System.out.println("\nAlphabet: " + allTasks);
+        System.out.println("Word: " + word);
         Set set = new Set(alphabet);
         set.calculateDependency();
-        System.out.println("Relacje zależności i niezależności:\n" + set);
-        System.out.println("Postać FNF śladu w: " + set.FNF(word));
+        System.out.println("Dependency and independency relations:\n" + set);
+        System.out.println("FNF of a trace w: " + set.FNF(word));
         Graph dikertGrapf = new Graph(word, set);
-        System.out.println("Graf Dikerta: " + dikertGrapf);
-        System.out.println("Postać FNF na podstawie grafu Dikerta: " + dikertGrapf.FNF());
+        System.out.println("Dikert's graph: " + dikertGrapf);
+        System.out.println("FNF based on Dikert's graph: " + dikertGrapf.FNF());
 
         try {
             dikertGrapf.saveAsFile("res_test2.dot");

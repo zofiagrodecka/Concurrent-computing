@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -170,6 +173,22 @@ public class Graph {
             }
         }
         return stack;
+    }
+
+    public void saveAsFile(String filename) throws IOException {
+        String result = "digraph g{\n";
+        for(Edge edge : edges){
+            result += edge.getV1().getId() + " -> " + edge.getV2().getId() + "\n";
+        }
+
+        for(Vertex v : vertices){
+            result += v.getId() + "[ label=" + v.getLabel() + " ]\n";
+        }
+        result += "}";
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+        writer.write(result);
+        writer.close();
     }
 
     public String toString(){

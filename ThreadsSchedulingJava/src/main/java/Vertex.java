@@ -13,6 +13,10 @@ public class Vertex {
         return visited;
     }
 
+    public int getId(){
+        return id;
+    }
+
     public char getLabel(){
         return label;
     }

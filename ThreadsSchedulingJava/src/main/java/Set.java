@@ -9,6 +9,7 @@ public class Set {
 
     Set(Alphabet alphabet){
         this.alphabet = alphabet;
+        calculateDependency();
     }
 
     private void addDependentPair(Task task1, Task task2){
@@ -27,14 +28,13 @@ public class Set {
             for(int j=0; j<alphabet.tasks.size(); j++){
                 t1 = alphabet.tasks.get(i);
                 t2 = alphabet.tasks.get(j);
-                if(!t1.equals(t2)){
-                    if(t1.isDependent(t2)){
-                        addDependentPair(t1, t2);
-                    }
-                    else{
-                        addIndependentPair(t1, t2);
-                    }
+                if(t1.isDependent(t2)){
+                    addDependentPair(t1, t2);
                 }
+                else{
+                    addIndependentPair(t1, t2);
+                }
+
             }
         }
     }
@@ -43,9 +43,6 @@ public class Set {
         ArrayList<Task> result = new ArrayList<Task>();
         for(int i=0; i<dependentTasks.size(); i+= 2){
             if(dependentTasks.get(i).getLabel() == label){
-                if(result.size() == 0){
-                    result.add(dependentTasks.get(i));
-                }
                 result.add(dependentTasks.get(i+1));
             }
         }

@@ -44,7 +44,6 @@ public class Main {
         System.out.println("\nAlphabet: " + allTasks);
         System.out.println("Word: " + word);
         Set set = new Set(alphabet);
-        set.calculateDependency();
         System.out.println("Dependency and independency relations:\n" + set);
         System.out.println("FNF of a trace w: " + set.FNF(word));
         Graph dikertGrapf = new Graph(word, set);

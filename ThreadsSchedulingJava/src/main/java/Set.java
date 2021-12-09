@@ -1,9 +1,11 @@
-import java.util.ArrayList;
+import javax.security.auth.login.AccountLockedException;
+import java.util.*;
 
 public class Set {
     Alphabet alphabet;
     ArrayList<Task> dependentTasks = new ArrayList<Task>(); // Dwa pierwsze elementy są ze sobą zależne, potem kolejne dwa są ze sobą zależne, potem kolejna para, itd...
     ArrayList<Task> independentTasks = new ArrayList<Task>(); // Analogicznie jak dependentTasks
+    ArrayList<ArrayList<Task>> FNF;
 
 
     Set(Alphabet alphabet){
@@ -38,10 +40,10 @@ public class Set {
         }
     }
 
-    public ArrayList<Task> getDependentTasks(String label) {
+    public ArrayList<Task> getDependentTasks(char label) {
         ArrayList<Task> result = new ArrayList<Task>();
         for(int i=0; i<dependentTasks.size(); i+= 2){
-            if(dependentTasks.get(i).getLabel().equals(label)){
+            if(dependentTasks.get(i).getLabel() == label){
                 if(result.size() == 0){
                     result.add(dependentTasks.get(i));
                 }
@@ -51,6 +53,77 @@ public class Set {
         return result;
     }
 
+    public ArrayList<ArrayList<Task>> FNF(String word) {
+        ArrayList<Stack<Task>> stacks = new ArrayList<>(alphabet.size());
+        for (int i = 0; i < alphabet.size(); i++) {
+            stacks.add(new Stack<Task>());
+        }
+        //word = new StringBuilder(word).reverse().toString();
+
+        char c;
+        Task currentTask;
+        int index;
+        Task empytTask = new Task(' ', ' ', " ");
+        ArrayList<Task> dependent;
+
+        for (int i = word.length()-1; i >= 0; i--) {
+            c = word.charAt(i);
+            currentTask = alphabet.taskFromChar(c);
+            index = alphabet.tasks.indexOf(currentTask);
+            stacks.get(index).push(currentTask);
+            dependent = getDependentTasks(c);
+            for(Task task : dependent){
+                if(! task.equals(currentTask)){
+                    index = alphabet.tasks.indexOf(task);
+                    stacks.get(index).push(empytTask);
+                }
+            }
+        }
+        System.out.println(stacks);
+
+        ArrayList<ArrayList<Task>> fnf = new ArrayList<>();
+        ArrayList<Integer> stacksToBePoped = new ArrayList<Integer>();
+        while(! allStacksEmpty(stacks)){
+            fnf.add(new ArrayList<Task>());
+            for(int i=0; i<alphabet.size(); i++){
+                if(! stacks.get(i).empty()){
+                    currentTask = stacks.get(i).peek();
+                    System.out.println(currentTask);
+                    if(! empytTask.equals(currentTask)){
+                        fnf.get(fnf.size()-1).add(currentTask);
+                        stacks.get(i).pop();
+                        dependent = getDependentTasks(currentTask.getLabel());
+                        System.out.println(dependent);
+                        for(Task task : dependent){
+                            index = alphabet.tasks.indexOf(task);
+                            if(!task.equals(currentTask)){
+                                System.out.println(stacks);
+                                //stacks.get(index).pop();
+                                stacksToBePoped.add(index);
+                            }
+                        }
+                    }
+                }
+            }
+            for(Integer number : stacksToBePoped){
+                stacks.get(number).pop();
+            }
+            stacksToBePoped.clear();
+        }
+
+        return fnf;
+    }
+
+    private boolean allStacksEmpty(ArrayList<Stack<Task>> stacks){
+        for (Stack<Task> stack : stacks) {
+            if (!stack.empty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // todo
     public String toString(){
         return "Dependency set: " + dependentTasks + "\nIndependency set: " + independentTasks;
     }

@@ -1,9 +1,9 @@
 public class Task {
-    private final String label;
+    private final char label;
     private final char modifiedResource;
     private final String operatedResources;
 
-    Task(String label, char modifiedResource, String operatedResources){
+    Task(char label, char modifiedResource, String operatedResources){
         this.label = label;
         this.modifiedResource = modifiedResource;
         this.operatedResources = operatedResources;
@@ -32,7 +32,7 @@ public class Task {
         return false;
     }
 
-    public String getLabel(){
+    public char getLabel(){
         return label;
     }
 
@@ -45,13 +45,13 @@ public class Task {
         }
 
         Task that = (Task) other;
-        if(that.label.equals(this.label)){
+        if(that.label == this.label){
             return true;
         }
         return false;
     }
 
     public String toString(){
-        return label;
+        return String.valueOf(label);
     }
 }

@@ -6,4 +6,17 @@ public class Alphabet {
     Alphabet(ArrayList<Task> alphabet){
         this.tasks = alphabet;
     }
+
+    int size(){
+        return tasks.size();
+    }
+
+    Task taskFromChar(char c){
+        for(Task task : tasks){
+            if(task.getLabel() == c){
+                return task;
+            }
+        }
+        return null;
+    }
 }

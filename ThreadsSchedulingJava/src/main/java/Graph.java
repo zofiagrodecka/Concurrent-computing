@@ -4,8 +4,8 @@ import java.util.Collections;
 public class Graph {
     private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
-    private String trace;
-    private Set set;
+    private final String trace;
+    private final Set set;
 
     Graph(String word, Set set){
         this.trace = word;
@@ -18,12 +18,12 @@ public class Graph {
         Vertex current;
         for(int i=0; i<trace.length(); i++){
             c = trace.charAt(i);
-            current = new Vertex(String.valueOf(c), i);
+            current = new Vertex(c, i);
             vertices.add(current);
             for(Vertex v : vertices){
                 if(!v.equals(current)){
                     for(Task task : set.getDependentTasks(current.getLabel())){
-                        if(task.getLabel().equals(v.getLabel())){
+                        if(task.getLabel() == v.getLabel()){
                             edges.add(new Edge(v, current));
                         }
                     }

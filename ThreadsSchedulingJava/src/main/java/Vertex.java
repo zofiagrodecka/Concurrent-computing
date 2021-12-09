@@ -1,10 +1,10 @@
 public class Vertex {
-    String label;
+    char label;
     int id;
     boolean visited = false;
     int maxLevel = -1;
 
-    Vertex(String label, int id){
+    Vertex(char label, int id){
         this.label = label;
         this.id = id;
     }
@@ -13,7 +13,7 @@ public class Vertex {
         return visited;
     }
 
-    public String getLabel(){
+    public char getLabel(){
         return label;
     }
 
@@ -38,7 +38,7 @@ public class Vertex {
         }
 
         Vertex that = (Vertex) other;
-        if(that.id == this.id && that.label.equals(this.label)){
+        if(that.id == this.id && that.label == this.label){
             return true;
         }
         return false;

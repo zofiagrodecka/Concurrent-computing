@@ -11,7 +11,7 @@ public class Alphabet {
         return tasks.size();
     }
 
-    Task taskFromChar(char c){
+    public Task taskFromChar(char c){
         for(Task task : tasks){
             if(task.getLabel() == c){
                 return task;

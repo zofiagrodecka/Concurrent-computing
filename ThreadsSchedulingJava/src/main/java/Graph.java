@@ -30,13 +30,12 @@ public class Graph {
                 }
             }
         }
-        System.out.println(this);
+        System.out.println("Przed usunięciem tranzytywnych krawędzi: " + this);
         transitiveReduction();
     }
 
     public ArrayList<ArrayList<Vertex>> FNF(){
         ArrayList<Vertex> topologicalSortedVertices = topologicalSort();
-        System.out.println(topologicalSortedVertices);
         Collections.reverse(topologicalSortedVertices);
         calculateMaxLevels();
         int maxNumLevels = maxNumberOfLevels();
@@ -54,7 +53,6 @@ public class Graph {
 
     private void calculateMaxLevels(){
         ArrayList<Vertex> topologicalSortedVertices = topologicalSort();
-        System.out.println(topologicalSortedVertices);
         Collections.reverse(topologicalSortedVertices);
 
         for(Vertex v : vertices){
@@ -159,16 +157,6 @@ public class Graph {
             stack.add(u);
         }
     }
-
-    /*private void DFS(Vertex start) {
-        start.setVisited(true);
-        //ArrayList<Edge> adjacentEdges = edges.stream().filter(edge -> edge.getV1().equals(startVertex)).collect(Collectors.toList());
-        for(Vertex v : vertices){
-            if(!v.isVisited()){
-                DFSVisit(v);
-            }
-        }
-    }*/
 
     private ArrayList<Vertex> topologicalSort(){
         ArrayList<Vertex> stack = new ArrayList<Vertex>();

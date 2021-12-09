@@ -1,4 +1,3 @@
-import javax.security.auth.login.AccountLockedException;
 import java.util.*;
 
 public class Set {
@@ -58,7 +57,6 @@ public class Set {
         for (int i = 0; i < alphabet.size(); i++) {
             stacks.add(new Stack<Task>());
         }
-        //word = new StringBuilder(word).reverse().toString();
 
         char c;
         Task currentTask;
@@ -79,7 +77,6 @@ public class Set {
                 }
             }
         }
-        System.out.println(stacks);
 
         ArrayList<ArrayList<Task>> fnf = new ArrayList<>();
         ArrayList<Integer> stacksToBePoped = new ArrayList<Integer>();
@@ -88,17 +85,13 @@ public class Set {
             for(int i=0; i<alphabet.size(); i++){
                 if(! stacks.get(i).empty()){
                     currentTask = stacks.get(i).peek();
-                    System.out.println(currentTask);
                     if(! empytTask.equals(currentTask)){
                         fnf.get(fnf.size()-1).add(currentTask);
                         stacks.get(i).pop();
                         dependent = getDependentTasks(currentTask.getLabel());
-                        System.out.println(dependent);
                         for(Task task : dependent){
                             index = alphabet.tasks.indexOf(task);
                             if(!task.equals(currentTask)){
-                                System.out.println(stacks);
-                                //stacks.get(index).pop();
                                 stacksToBePoped.add(index);
                             }
                         }
@@ -123,8 +116,17 @@ public class Set {
         return true;
     }
 
-    // todo
     public String toString(){
-        return "Dependency set: " + dependentTasks + "\nIndependency set: " + independentTasks;
+        String result = "Dependency set: ";
+        for(int i=0; i<dependentTasks.size(); i+= 2){
+            result += "(" + dependentTasks.get(i).toString() + ", " + dependentTasks.get(i+1).toString() + "), ";
+        }
+        result = result.substring(0, result.length()-2);
+        result += "\nIndependency set: ";
+        for(int i=0; i<independentTasks.size(); i+= 2){
+            result += "(" + independentTasks.get(i).toString() + ", " + independentTasks.get(i+1).toString() + "), ";
+        }
+        result = result.substring(0, result.length()-2);
+        return result;
     }
 }

@@ -1,6 +1,6 @@
 public class Edge {
-    Vertex v1;
-    Vertex v2;
+    private final Vertex v1;
+    private final Vertex v2;
 
     Edge(Vertex v1, Vertex v2){
         this.v1 = v1;

@@ -1,10 +1,9 @@
 import java.util.*;
 
 public class Set {
-    Alphabet alphabet;
-    ArrayList<Task> dependentTasks = new ArrayList<Task>(); // Dwa pierwsze elementy są ze sobą zależne, potem kolejne dwa są ze sobą zależne, potem kolejna para, itd...
-    ArrayList<Task> independentTasks = new ArrayList<Task>(); // Analogicznie jak dependentTasks
-    ArrayList<ArrayList<Task>> FNF;
+    private final Alphabet alphabet;
+    public ArrayList<Task> dependentTasks = new ArrayList<Task>(); // Dwa pierwsze elementy są ze sobą zależne, potem kolejne dwa są ze sobą zależne, potem kolejna para, itd...
+    public ArrayList<Task> independentTasks = new ArrayList<Task>(); // Analogicznie jak dependentTasks
 
 
     Set(Alphabet alphabet){

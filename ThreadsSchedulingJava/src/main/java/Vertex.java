@@ -1,8 +1,8 @@
 public class Vertex {
-    char label;
-    int id;
-    boolean visited = false;
-    int maxLevel = -1;
+    private final char label;
+    private final int id;
+    private boolean visited = false;
+    private int maxLevel = -1;
 
     Vertex(char label, int id){
         this.label = label;

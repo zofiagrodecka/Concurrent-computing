@@ -33,7 +33,7 @@ public class Graph {
                 }
             }
         }
-        System.out.println("Przed usunięciem tranzytywnych krawędzi: " + this);
+        System.out.println("Before the deletion of edges: " + this);
         transitiveReduction();
     }
 
@@ -105,21 +105,34 @@ public class Graph {
         Edge edge;
 
         for(Vertex u : vertices){
+            for(Vertex v : vertices){
+                for(Vertex w : vertices){
+                    if(edges.contains(new Edge(u, v)) && edges.contains(new Edge(v, w))){
+                        toBeRemoved.add(new Edge(u, w));
+                    }
+                }
+            }
+        }
+
+        /*for(Vertex u : vertices){
+            System.out.println("Vertex u=" + u);
             adjacent = adjacentVertices(u);
+            System.out.println(adjacent);
             for(Vertex neighbour : adjacent){
                 DFSVisit(neighbour, visited, null);
-            }
-
-            for(Vertex v : visited){
-                edge = new Edge(u,v);
-                if(containEdge(edge)){
-                    toBeRemoved.add(edge);
+                for(Vertex v : visited){
+                    edge = new Edge(u,v);
+                    if(containEdge(edge)){
+                        toBeRemoved.add(edge);
+                    }
+                    v.setVisited(false);
                 }
-                v.setVisited(false);
+                visited.clear();
             }
-            visited.clear();
+            System.out.println(visited);
 
-        }
+
+        }*/
 
         edges.removeAll(toBeRemoved);
     }

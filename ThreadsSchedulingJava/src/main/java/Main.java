@@ -18,7 +18,7 @@ public class Main {
         String lettersAfterColon;
 
         String str;
-        try(BufferedReader fileReader = new BufferedReader(new FileReader("src/main/testfiles/test2.txt"))) {
+        try(BufferedReader fileReader = new BufferedReader(new FileReader("src/main/testfiles/test1.txt"))) {
             while((str = fileReader.readLine()) != null){
                 System.out.println(str);
                 if(str.charAt(0) == 'A'){
@@ -51,7 +51,7 @@ public class Main {
         System.out.println("FNF based on Dikert's graph: " + dikertGrapf.FNF());
 
         try {
-            dikertGrapf.saveAsFile("res_test2.dot");
+            dikertGrapf.saveAsFile("res_test1.dot");
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);

@@ -27,7 +27,7 @@ public class Graph {
                 if(!v.equals(current)){
                     for(Task task : set.getDependentTasks(current.getLabel())){
                         if(task.getLabel() == v.getLabel()){
-                            edges.add(new Edge(v, current));
+                            edges.add(new Edge(v, current)); // dodaje krawedz z wierzcholka zaleznego od wlasnie dodanego
                         }
                     }
                 }
@@ -38,8 +38,8 @@ public class Graph {
     }
 
     public ArrayList<ArrayList<Vertex>> FNF(){
-        ArrayList<Vertex> topologicalSortedVertices = topologicalSort();
-        Collections.reverse(topologicalSortedVertices);
+        ArrayList<Vertex> topologicalSortedVertices = topologicalSort(); // ArrayList pełni rolę stosu
+        Collections.reverse(topologicalSortedVertices); // wierzchołki były dodawane na koniec listy, więc trzeba odwrócić kolejność jej elementów, bo ściągam ze stosu od ostatnio dodanego elementu
         calculateMaxLevels();
         int maxNumLevels = maxNumberOfLevels();
         ArrayList<ArrayList<Vertex>> result = new ArrayList<>(maxNumLevels+1);
@@ -47,14 +47,14 @@ public class Graph {
             result.add(new ArrayList<Vertex>());
         }
 
-        for(Vertex v : topologicalSortedVertices){
+        for(Vertex v : topologicalSortedVertices){ // przeglądam wierzchołki w kolejności sortowania topologicznego i dodaję do odpowiednich warstw
             result.get(v.getMaxLevel()).add(v);
         }
 
         return result;
     }
 
-    private void calculateMaxLevels(){
+    private void calculateMaxLevels(){ // oblicza maksymalne poziomy wierzchołków
         ArrayList<Vertex> topologicalSortedVertices = topologicalSort();
         Collections.reverse(topologicalSortedVertices);
 
@@ -88,7 +88,7 @@ public class Graph {
         }
     }
 
-    private int maxNumberOfLevels(){
+    private int maxNumberOfLevels(){ // oblicza "wysokość" grafu, czyli maksymalną liczbę poziomów
         int max = -1;
         for(Vertex v : vertices){
             if(v.getMaxLevel() > max){
@@ -98,7 +98,7 @@ public class Graph {
         return max;
     }
 
-    private void transitiveReduction() {
+    private void transitiveReduction() { // usuwanie nadmiarowych krawedzi
         ArrayList<Edge> toBeRemoved = new ArrayList<Edge>();
 
         for(Vertex u : vertices){
@@ -114,7 +114,7 @@ public class Graph {
         edges.removeAll(toBeRemoved);
     }
 
-    private ArrayList<Vertex> adjacentVertices(Vertex v){
+    private ArrayList<Vertex> adjacentVertices(Vertex v){ // sąsiednie wierzchołki v
         ArrayList<Vertex> result = new ArrayList<Vertex>();
         for(Edge e : edges){
             if(e.getV1() == v){
@@ -125,32 +125,29 @@ public class Graph {
     }
 
 
-    private void DFSVisit(Vertex u, ArrayList<Vertex> visited, ArrayList<Vertex> stack){
+    private void DFSVisit(Vertex u, ArrayList<Vertex> stack){ // pojedyncze uruchomienie DFS z danego wierzchołka
         u.setVisited(true);
         ArrayList<Vertex> adjacentVertices = adjacentVertices(u);
         for(Vertex v : adjacentVertices){
             if(!v.isVisited()){
-                if(visited != null){
-                    visited.add(v);
-                }
-                DFSVisit(v, visited, stack);
+                DFSVisit(v, stack);
             }
         }
 
-        if(stack != null){
+        if(stack != null){ // wrzucam na stos przetworzone wierzcholki (sortowanie topologiczne)
             stack.add(u);
         }
     }
 
     private ArrayList<Vertex> topologicalSort(){
         ArrayList<Vertex> stack = new ArrayList<Vertex>();
-        for(Vertex v : vertices){
+        for(Vertex v : vertices){ // na początku ustawiam wierzchołki jako jeszcze nie odwiedzone
             v.setVisited(false);
         }
 
-        for(Vertex v : vertices){
+        for(Vertex v : vertices){ // uruchamiam DFS dla każdego jeszcze nie odwiedzonego wierzchołka
             if(!v.isVisited()){
-                DFSVisit(v, null, stack);
+                DFSVisit(v, stack);
             }
         }
         return stack;

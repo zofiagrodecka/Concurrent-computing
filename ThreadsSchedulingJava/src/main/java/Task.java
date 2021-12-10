@@ -9,7 +9,7 @@ public class Task {
         this.operatedResources = operatedResources;
     }
 
-    public boolean isDependent(Task other){
+    public boolean isDependent(Task other){ // czy dany task jest zależny od podanego
         if(this.modifiedResource == other.modifiedResource){
             return true;
         }

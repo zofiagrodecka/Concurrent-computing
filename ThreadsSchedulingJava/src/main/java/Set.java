@@ -21,7 +21,7 @@ public class Set {
         independentTasks.add(task2);
     }
 
-    public void calculateDependency(){
+    public void calculateDependency(){ // dodaje zależne/niezależne pary do odpowiednich zbiorów
         Task t1, t2;
         for(int i=0; i<alphabet.tasks.size(); i++){
             for(int j=0; j<alphabet.tasks.size(); j++){
@@ -38,7 +38,7 @@ public class Set {
         }
     }
 
-    public ArrayList<Task> getDependentTasks(char label) {
+    public ArrayList<Task> getDependentTasks(char label) { // zwraca zależne taski od tego z podaną etykietą
         ArrayList<Task> result = new ArrayList<Task>();
         for(int i=0; i<dependentTasks.size(); i+= 2){
             if(dependentTasks.get(i).getLabel() == label){
@@ -49,6 +49,7 @@ public class Set {
     }
 
     public ArrayList<ArrayList<Task>> FNF(String word) {
+        // alokacja stosów
         ArrayList<Stack<Task>> stacks = new ArrayList<>(alphabet.size());
         for (int i = 0; i < alphabet.size(); i++) {
             stacks.add(new Stack<Task>());
@@ -60,6 +61,7 @@ public class Set {
         Task empytTask = new Task(' ', ' ', " ");
         ArrayList<Task> dependent;
 
+        // Dodawanie elementów do stosów
         for (int i = word.length()-1; i >= 0; i--) {
             c = word.charAt(i);
             currentTask = alphabet.taskFromChar(c);
@@ -74,16 +76,18 @@ public class Set {
             }
         }
 
+        // Usuwanie elementów ze stosów
         ArrayList<ArrayList<Task>> fnf = new ArrayList<>();
         ArrayList<Integer> stacksToBePoped = new ArrayList<Integer>();
         while(! allStacksEmpty(stacks)){
             fnf.add(new ArrayList<Task>());
             for(int i=0; i<alphabet.size(); i++){
                 if(! stacks.get(i).empty()){
-                    currentTask = stacks.get(i).peek();
+                    currentTask = stacks.get(i).peek(); // podejrzenie wierzchniego elementu i-tego stosu
                     if(! empytTask.equals(currentTask)){
                         fnf.get(fnf.size()-1).add(currentTask);
                         stacks.get(i).pop();
+                        // przygotowanie zbioru stosów zależnych od bieżącego zadania, z których będą usuwane emptyTaski z góry
                         dependent = getDependentTasks(currentTask.getLabel());
                         for(Task task : dependent){
                             index = alphabet.tasks.indexOf(task);
@@ -94,7 +98,7 @@ public class Set {
                     }
                 }
             }
-            for(Integer number : stacksToBePoped){
+            for(Integer number : stacksToBePoped){ // usuwanie pierwszych elementów ze stosów
                 stacks.get(number).pop();
             }
             stacksToBePoped.clear();
@@ -103,7 +107,7 @@ public class Set {
         return fnf;
     }
 
-    private boolean allStacksEmpty(ArrayList<Stack<Task>> stacks){
+    private boolean allStacksEmpty(ArrayList<Stack<Task>> stacks){ // czy wszystkie stosy są puste
         for (Stack<Task> stack : stacks) {
             if (!stack.empty()) {
                 return false;

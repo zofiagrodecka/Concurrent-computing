@@ -99,10 +99,7 @@ public class Graph {
     }
 
     private void transitiveReduction() {
-        ArrayList<Vertex> visited = new ArrayList<Vertex>();
         ArrayList<Edge> toBeRemoved = new ArrayList<Edge>();
-        ArrayList<Vertex> adjacent;
-        Edge edge;
 
         for(Vertex u : vertices){
             for(Vertex v : vertices){
@@ -114,36 +111,7 @@ public class Graph {
             }
         }
 
-        /*for(Vertex u : vertices){
-            System.out.println("Vertex u=" + u);
-            adjacent = adjacentVertices(u);
-            System.out.println(adjacent);
-            for(Vertex neighbour : adjacent){
-                DFSVisit(neighbour, visited, null);
-                for(Vertex v : visited){
-                    edge = new Edge(u,v);
-                    if(containEdge(edge)){
-                        toBeRemoved.add(edge);
-                    }
-                    v.setVisited(false);
-                }
-                visited.clear();
-            }
-            System.out.println(visited);
-
-
-        }*/
-
         edges.removeAll(toBeRemoved);
-    }
-
-    private boolean containEdge(Edge edge){
-        for(Edge e: edges){
-            if(e.equals(edge)){
-                return true;
-            }
-        }
-        return false;
     }
 
     private ArrayList<Vertex> adjacentVertices(Vertex v){

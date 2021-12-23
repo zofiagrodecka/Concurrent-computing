@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class MatrixFileReader {
@@ -9,10 +8,10 @@ public class MatrixFileReader {
         this.filename = filename;
     }
 
-    public float[][] readFile() throws FileNotFoundException {
+    public double[][] readFile() throws FileNotFoundException {
         Scanner scanner = new Scanner(new File(filename));
         final int n = scanner.nextInt();
-        float[][] matrix = new float[n][n+1];
+        double[][] matrix = new double[n][n+1];
         int i = 0;
         int j = 0;
         while(i < n && j < n){
@@ -31,7 +30,7 @@ public class MatrixFileReader {
         return matrix;
     }
 
-    public void writeFile(String filename, float[][] matrix) throws IOException {
+    public void writeFile(String filename, double[][] matrix) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         writer.write(String.valueOf(matrix.length) + '\n');
 

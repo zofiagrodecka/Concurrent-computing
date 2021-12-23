@@ -5,9 +5,9 @@ public class CThread implements Runnable{
     private final int i;
     private final int j;
     private final int k;
-    private final float[][] multiplications;
+    private final double[][] multiplications;
 
-    public CThread(GaussianElimination elimination, int i, int j, int k, float[][] multiplications){
+    public CThread(GaussianElimination elimination, int i, int j, int k, double[][] multiplications){
         this.gaussianElimination = elimination;
         this.i = i;
         this.j = j;
@@ -18,6 +18,5 @@ public class CThread implements Runnable{
     @Override
     public void run() {
         gaussianElimination.subtract(i, j, k, multiplications[j][k]);
-        System.out.println(Arrays.deepToString(multiplications));
     }
 }

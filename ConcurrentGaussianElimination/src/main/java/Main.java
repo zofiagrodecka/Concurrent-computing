@@ -11,7 +11,7 @@ public class Main {
 
         MatrixFileReader fileReader = new MatrixFileReader(args[0]);
         try {
-            float[][] matrix = fileReader.readFile();
+            double[][] matrix = fileReader.readFile();
             System.out.println(Arrays.deepToString(matrix));
             GaussianElimination elimination = new GaussianElimination(matrix);
             elimination.run();

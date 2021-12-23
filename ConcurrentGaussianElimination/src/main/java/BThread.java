@@ -5,10 +5,10 @@ public class BThread implements Runnable {
     private final int i;
     private final int j;
     private final int k;
-    private final float[] multipliers;
-    private final float[][] multiplications;
+    private final double[] multipliers;
+    private final double[][] multiplications;
 
-    public BThread(GaussianElimination elimination, int i, int j, int k, float[] multipliers, float[][] multiplications){
+    public BThread(GaussianElimination elimination, int i, int j, int k, double[] multipliers, double[][] multiplications){
         this.gaussianElimination = elimination;
         this.i = i;
         this.j = j;
@@ -20,6 +20,5 @@ public class BThread implements Runnable {
     @Override
     public void run() {
         multiplications[j][k] = gaussianElimination.multiply(i, j, k, multipliers[k]);
-        System.out.println(Arrays.deepToString(multiplications));
     }
 }

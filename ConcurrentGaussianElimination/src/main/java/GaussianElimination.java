@@ -2,28 +2,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GaussianElimination {
-    private float[][] matrix;
+    private double[][] matrix;
 
-    public GaussianElimination(float[][] matrix){
+    public GaussianElimination(double[][] matrix){
         this.matrix = matrix;
     }
 
-    public float calculateMultiplier(int i, int k){
+    public double calculateMultiplier(int i, int k){
         return matrix[k][i]/matrix[i][i];
     }
 
-    public float multiply(int i, int j, int k, float multiplier){
+    public double multiply(int i, int j, int k, double multiplier){
         return matrix[i][j] * multiplier;
     }
 
-    public void subtract(int i, int j, int k, float subtrahend){
+    public void subtract(int i, int j, int k, double subtrahend){
         matrix[k][j] -= subtrahend;
     }
 
     public void run() throws InterruptedException {
         final int n = matrix.length;
-        float[] multipliers = new float[n];
-        float[][] multiplications = new float[n+1][n];
+        double[] multipliers = new double[n];
+        double[][] multiplications = new double[n+1][n];
         ArrayList<Thread> aThreads = new ArrayList<>();
         ArrayList<Thread> bThreads = new ArrayList<>();
         ArrayList<Thread> cThreads = new ArrayList<>();
@@ -38,7 +38,6 @@ public class GaussianElimination {
             for (Thread thread : aThreads) {
                 thread.join();
             }
-            System.out.println("Final A" + Arrays.toString(multipliers));
             aThreads.clear();
 
             for(int k=i+1; k<n; k++){
@@ -52,7 +51,6 @@ public class GaussianElimination {
             for (Thread thread : bThreads) {
                 thread.join();
             }
-            System.out.println("Final B " + Arrays.deepToString(multiplications));
             bThreads.clear();
 
             for(int k=i+1; k<n; k++){
@@ -66,46 +64,13 @@ public class GaussianElimination {
             for (Thread thread : cThreads) {
                 thread.join();
             }
-            System.out.println("Final C " + Arrays.deepToString(matrix));
             cThreads.clear();
         }
 
         System.out.println("Result:\n" + Arrays.deepToString(matrix));
-
-        float gcd;
-        for(int i=0; i<matrix.length; i++){
-            gcd = gcd(matrix[i]);
-            if(gcd != 1){
-                for(int j=0; j<matrix[i].length; j++){
-                    matrix[i][j] = matrix[i][j] / gcd;
-                }
-            }
-        }
-
-        System.out.println("Result after gcd:\n" + Arrays.deepToString(matrix));
     }
 
-    private float gcd(float a, float b){
-        if(a == 0){
-            return b;
-        }
-        return gcd(b % a, a);
-    }
-
-    private float gcd(float array[]){
-        float result = 0;
-        for (float element: array){
-            result = gcd(result, element);
-
-            if(result == 1){
-                return 1;
-            }
-        }
-
-        return result;
-    }
-
-    public float[][] getMatrix(){
+    public double[][] getMatrix(){
         return matrix;
     }
 

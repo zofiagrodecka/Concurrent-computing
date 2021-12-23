@@ -97,8 +97,7 @@ public class GaussianElimination {
         for (float element: array){
             result = gcd(result, element);
 
-            if(result == 1)
-            {
+            if(result == 1){
                 return 1;
             }
         }

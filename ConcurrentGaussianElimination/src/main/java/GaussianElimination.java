@@ -71,6 +71,39 @@ public class GaussianElimination {
         }
 
         System.out.println("Result:\n" + Arrays.deepToString(matrix));
+
+        float gcd;
+        for(int i=0; i<matrix.length; i++){
+            gcd = gcd(matrix[i]);
+            if(gcd != 1){
+                for(int j=0; j<matrix[i].length; j++){
+                    matrix[i][j] = matrix[i][j] / gcd;
+                }
+            }
+        }
+
+        System.out.println("Result after gcd:\n" + Arrays.deepToString(matrix));
+    }
+
+    private float gcd(float a, float b){
+        if(a == 0){
+            return b;
+        }
+        return gcd(b % a, a);
+    }
+
+    private float gcd(float array[]){
+        float result = 0;
+        for (float element: array){
+            result = gcd(result, element);
+
+            if(result == 1)
+            {
+                return 1;
+            }
+        }
+
+        return result;
     }
 
     public float[][] getMatrix(){

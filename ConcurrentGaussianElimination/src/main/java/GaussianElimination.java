@@ -68,6 +68,21 @@ public class GaussianElimination {
         }
 
         System.out.println("Result:\n" + Arrays.deepToString(matrix));
+
+        backPropagation();
+        System.out.println("Result after back propagation:\n" + Arrays.deepToString(matrix));
+    }
+
+    private void backPropagation(){
+        int n = matrix.length;
+        for(int i=n-1; i>=0; i--){
+            for(int j=i+1; j<n; j++){
+                matrix[i][n] -= matrix[i][j] * matrix[j][n];
+                matrix[i][j] = 0;
+            }
+            matrix[i][n] /= matrix[i][i];
+            matrix[i][i] = 1;
+        }
     }
 
     public double[][] getMatrix(){
